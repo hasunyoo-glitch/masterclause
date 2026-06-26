@@ -1,6 +1,8 @@
 #!/bin/bash
-# macOS one-shot setup. Double-click in Finder (run `chmod +x install.command` once),
-# or run `bash install.command` from Terminal.
+# macOS one-shot setup.
+# Recommended: run `bash install.command` from Terminal (bypasses the Gatekeeper
+# "could not verify ... malware" block that appears on a downloaded script).
+# To double-click instead: `xattr -dr com.apple.quarantine .` then `chmod +x *.command`.
 set -e
 cd "$(dirname "$0")"
 

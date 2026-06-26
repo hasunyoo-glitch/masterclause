@@ -38,11 +38,24 @@ GitHub에서 이 저장소를 내려받은 뒤(Code → Download ZIP, 압축 해
 2. **`run.bat`** 더블클릭 — 프로그램이 실행됩니다.
 
 ### macOS
-1. 터미널에서 한 번만 실행 권한을 부여: `chmod +x install.command run.command`
-   (또는 그냥 `bash install.command` 로 실행)
-2. **`install.command`** 더블클릭(또는 `bash install.command`) — Python 확인/설치 +
-   가상환경 + 의존성 설치.
-3. **`run.command`** 더블클릭(또는 `bash run.command`) — 실행.
+가장 간단한 방법은 **터미널에서 `bash`로 실행**하는 것입니다. macOS Gatekeeper는
+인터넷에서 받은 스크립트의 *더블클릭*만 막으므로, 셸로 직접 실행하면 우회됩니다.
+
+```bash
+cd /path/to/00_music_contract_analyzer   # 'cd ' 입력 후 폴더를 터미널로 드래그
+bash install.command   # Python 확인/설치 + 가상환경 + 의존성
+bash run.command       # 실행
+```
+
+> **"Apple could not verify ... free of malware" 차단이 뜨나요?**
+> 정상입니다(서명/공증되지 않은 다운로드 스크립트). 위처럼 `bash`로 실행하면 됩니다.
+> 더블클릭으로 쓰고 싶으면 격리 속성을 제거하세요:
+> ```bash
+> cd /path/to/00_music_contract_analyzer
+> xattr -dr com.apple.quarantine .
+> chmod +x install.command run.command
+> ```
+> 또는 차단 직후 **시스템 설정 → 개인정보 보호 및 보안 → "확인 없이 열기"**.
 
 > Python을 수동으로 설치하려면: **https://www.python.org/downloads/** (3.11 이상 필요).
 > Windows 설치 시 "Add Python to PATH" 체크를 권장합니다.
