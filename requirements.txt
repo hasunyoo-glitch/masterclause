@@ -2,7 +2,9 @@
 # Install:  python -m venv .venv ; .venv\Scripts\activate ; pip install -r requirements.txt
 
 # --- GUI ---
-PySide6>=6.6,<6.9
+# No upper cap: older PySide6 (6.6–6.9) only supports up to Python 3.13, so on
+# Python 3.14+ pip must be free to pick 6.10/6.11. Our usage is stable 6.x API.
+PySide6>=6.6
 
 # --- Core / analysis ---
 anthropic>=0.40            # Claude SDK (model: claude-opus-4-8)
