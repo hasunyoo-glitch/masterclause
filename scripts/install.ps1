@@ -1,10 +1,13 @@
 # One-shot setup: ensure Python 3.11+, create .venv, install dependencies.
 # Invoked by install.bat (double-click). Safe to re-run.
+# NOTE: messages are kept ASCII/English on purpose - non-ASCII text in batch/
+# PowerShell launch scripts is fragile across Windows code pages. The detailed
+# Korean guide lives in README.md.
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $PSScriptRoot
 Set-Location $Root
 
-Write-Host "=== MasterClause - Music Contract Analyzer : 설치 / Setup ===" -ForegroundColor Cyan
+Write-Host "=== MasterClause - Music Contract Analyzer : Setup ===" -ForegroundColor Cyan
 
 $PyDownloadPage = "https://www.python.org/downloads/"
 $PyInstallerUrl = "https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe"
@@ -41,7 +44,7 @@ function Find-Python {
 
 $py = Find-Python
 if (-not $py) {
-    Write-Host "Python 3.11+ 가 없습니다. Python 3.12 를 설치합니다... / Installing Python 3.12..." -ForegroundColor Yellow
+    Write-Host "Python 3.11+ not found. Installing Python 3.12..." -ForegroundColor Yellow
     $installed = $false
     if (Get-Command winget -ErrorAction SilentlyContinue) {
         try {
@@ -52,32 +55,32 @@ if (-not $py) {
     }
     if (-not $installed) {
         $tmp = Join-Path $env:TEMP "python-3.12.10-amd64.exe"
-        Write-Host "다운로드 중 / Downloading: $PyInstallerUrl"
+        Write-Host "Downloading: $PyInstallerUrl"
         Invoke-WebRequest -Uri $PyInstallerUrl -OutFile $tmp
-        Write-Host "설치 중(사용자 범위) / Installing (user scope)..."
+        Write-Host "Installing (user scope)..."
         Start-Process -FilePath $tmp -ArgumentList "/quiet","InstallAllUsers=0","PrependPath=1","Include_launcher=1" -Wait
     }
     $py = Find-Python
     if (-not $py) {
-        Write-Error "Python 설치를 확인하지 못했습니다. 수동 설치 후 다시 실행하세요: $PyDownloadPage"
+        Write-Error "Could not verify a Python install. Please install it manually, then re-run: $PyDownloadPage"
         exit 1
     }
 }
 
-Write-Host "사용 Python / Using Python: $py" -ForegroundColor Green
+Write-Host "Using Python: $py" -ForegroundColor Green
 
 if (-not (Test-Path "$Root\.venv\Scripts\python.exe")) {
-    Write-Host "가상환경 생성 / Creating virtual environment (.venv)..."
+    Write-Host "Creating virtual environment (.venv)..."
     & $py -m venv .venv
 }
 $venvPy = Join-Path $Root ".venv\Scripts\python.exe"
 
-Write-Host "pip 업그레이드 / Upgrading pip..."
+Write-Host "Upgrading pip..."
 & $venvPy -m pip install --upgrade pip
 
-Write-Host "의존성 설치 / Installing dependencies (requirements.txt)..."
+Write-Host "Installing dependencies (requirements.txt)..."
 & $venvPy -m pip install -r requirements.txt
 
 Write-Host ""
-Write-Host "=== 설치 완료! / Done. ===" -ForegroundColor Cyan
-Write-Host "이제 run.bat 을 더블클릭해 실행하세요. / Now double-click run.bat to launch." -ForegroundColor Cyan
+Write-Host "=== Done. ===" -ForegroundColor Cyan
+Write-Host "Now double-click run.bat to launch the app." -ForegroundColor Cyan
