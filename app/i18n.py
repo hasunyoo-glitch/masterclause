@@ -176,9 +176,12 @@ _STRINGS: dict[str, dict[str, str]] = {
         "dlg.option_error": "옵션 오류",
         "dlg.option_check": "옵션 확인",
         "dlg.analysis_failed": "분석 실패",
-        "dlg.switch_lang_title": "언어 설정",
-        "dlg.switch_to_en": "영어로 분석을 진행합니다. 프로그램 화면도 영어로 전환할까요?",
-        "dlg.switch_to_ko": "한국어로 분석을 진행합니다. 프로그램 화면도 한국어로 전환할까요?",
+        # Shown at the transition moment → bilingual in both tables.
+        "dlg.switch_lang_title": "언어 전환 / Switch language",
+        "dlg.switch_to_en": "영어로 분석을 진행합니다. 프로그램 화면도 영어로 전환할까요?\n"
+                            "You're analyzing in English. Switch the interface to English too?",
+        "dlg.switch_to_ko": "한국어로 분석을 진행합니다. 프로그램 화면도 한국어로 전환할까요?\n"
+                            "You're analyzing in Korean. Switch the interface to Korean too?",
         "worker.unexpected": "예상치 못한 오류: {detail}",
     },
     "en": {
@@ -315,9 +318,12 @@ _STRINGS: dict[str, dict[str, str]] = {
         "dlg.option_error": "Option error",
         "dlg.option_check": "Check options",
         "dlg.analysis_failed": "Analysis failed",
-        "dlg.switch_lang_title": "Language",
-        "dlg.switch_to_en": "You're analyzing in English. Switch the interface to English too?",
-        "dlg.switch_to_ko": "You're analyzing in Korean. Switch the interface to Korean too?",
+        # Shown at the transition moment → bilingual in both tables (identical).
+        "dlg.switch_lang_title": "언어 전환 / Switch language",
+        "dlg.switch_to_en": "영어로 분석을 진행합니다. 프로그램 화면도 영어로 전환할까요?\n"
+                            "You're analyzing in English. Switch the interface to English too?",
+        "dlg.switch_to_ko": "한국어로 분석을 진행합니다. 프로그램 화면도 한국어로 전환할까요?\n"
+                            "You're analyzing in Korean. Switch the interface to Korean too?",
         "worker.unexpected": "Unexpected error: {detail}",
     },
 }
