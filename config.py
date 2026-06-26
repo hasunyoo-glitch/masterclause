@@ -90,6 +90,7 @@ MODEL_PRICING = {
 # Defaults for the options screen (overridable via config.json)
 # --------------------------------------------------------------------------- #
 DEFAULTS = {
+    "ui_language": "ko",            # interface language (separate from output)
     "perspective": "lawyer",
     "output_language": "ko",
     "jurisdiction": "KR",

@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from app.i18n import tr
 from core.models import AIClause, RiskLevel
 
 
@@ -73,7 +74,7 @@ class ScoreCard(Card):
     """Overall risk score + recommendation + sub-scores."""
 
     def __init__(self, result, parent: QWidget | None = None):
-        super().__init__(title="종합 위험 점수", parent=parent)
+        super().__init__(title=tr("score.title"), parent=parent)
         rs = result.risk_score
         row = QHBoxLayout()
         score = QLabel(f"{rs.overall}")
@@ -85,22 +86,19 @@ class ScoreCard(Card):
         row.addWidget(score)
         row.addWidget(outof, alignment=Qt.AlignBottom)
         row.addStretch(1)
-        row.addWidget(QLabel("권고:"), alignment=Qt.AlignVCenter)
+        row.addWidget(QLabel(tr("score.rec")), alignment=Qt.AlignVCenter)
         row.addWidget(rec)
         wrap = QWidget()
         wrap.setLayout(row)
         self.add(wrap)
 
-        sub = QLabel(
-            f"저작권 {rs.copyright}   ·   수익 {rs.revenue}   ·   "
-            f"통제 {rs.control}   ·   법적구제 {rs.legal_remedy}"
-        )
+        sub = QLabel(tr("score.sub", c=rs.copyright, r=rs.revenue,
+                        ctrl=rs.control, lr=rs.legal_remedy))
         sub.setStyleSheet("color:#444;")
         self.add(sub)
 
-        stats = QLabel(
-            f"RED 조항: {result.red_clause_count}    walk-away 이슈: {result.walk_away_count}"
-        )
+        stats = QLabel(tr("score.stats", red=result.red_clause_count,
+                          wa=result.walk_away_count))
         stats.setStyleSheet("color:#444; font-weight:600;")
         self.add(stats)
 
@@ -139,13 +137,13 @@ class ClauseItem(QFrame):
         dl = QVBoxLayout(self._detail)
         dl.setContentsMargins(28, 4, 4, 4)
         dl.setSpacing(6)
-        dl.addWidget(self._field("쟁점 / 집행가능성",
+        dl.addWidget(self._field(tr("clause.issue_enf"),
                                  f"{_v(clause.issue_type)}  ·  {_v(clause.enforceability)}"))
-        dl.addWidget(self._quote("원문", clause.verbatim_text))
-        dl.addWidget(self._field("요약", clause.summary))
-        dl.addWidget(self._field("당신에게 미치는 영향", clause.impact_on_you))
-        dl.addWidget(self._field("제안 수정안", clause.proposed_revision))
-        dl.addWidget(self._field("법적 근거", clause.legal_basis))
+        dl.addWidget(self._quote(tr("clause.verbatim"), clause.verbatim_text))
+        dl.addWidget(self._field(tr("clause.summary"), clause.summary))
+        dl.addWidget(self._field(tr("clause.impact"), clause.impact_on_you))
+        dl.addWidget(self._field(tr("clause.revision"), clause.proposed_revision))
+        dl.addWidget(self._field(tr("clause.legal_basis"), clause.legal_basis))
         self._detail.setVisible(False)
         layout.addWidget(self._detail)
 

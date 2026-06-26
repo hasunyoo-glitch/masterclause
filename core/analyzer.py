@@ -28,6 +28,8 @@ from core.models import (
 from core.parser import ParsedDocument
 from core.privacy import Anonymizer
 
+# progress(stage_key, fraction). stage_key is a stable key the UI localizes:
+# "prepare" | "detect_type" | "analyze" | "concern" | "done" (plus worker keys).
 ProgressFn = Callable[[str, float], None]
 CancelFn = Callable[[], bool]
 
@@ -64,7 +66,7 @@ def analyze(
     client = _client(options)
     model = options.model or config.MODEL_PRIMARY
 
-    progress("분석 준비 중…", 0.05)
+    progress("prepare", 0.05)
     _check_cancel()
 
     # 1. Privacy: optional reversible anonymization before transmission.
@@ -75,7 +77,7 @@ def analyze(
         contract_text = anonymizer.anonymize(contract_text)
 
     # 2. Contract-type detection → type-specific benchmark context.
-    progress("계약 유형 감지 중…", 0.15)
+    progress("detect_type", 0.15)
     _check_cancel()
     contract_type = _detect_contract_type(client, model, contract_text)
 
@@ -85,7 +87,7 @@ def analyze(
     system_blocks = _system_blocks(options, jur_ctx, bench_ctx)
 
     # 4. Main structured analysis.
-    progress("AI 조항 분석 중…", 0.25)
+    progress("analyze", 0.25)
     _check_cancel()
     analysis = _run_main_analysis(
         client, model, system_blocks, contract_text, progress, _check_cancel
@@ -102,14 +104,14 @@ def analyze(
 
     # 5. Optional user-concern advice (grounded in the finished analysis).
     if options.user_concern and options.user_concern.strip():
-        progress("우려 맞춤 조언 생성 중…", 0.9)
+        progress("concern", 0.9)
         _check_cancel()
         advice = _run_concern_advice(client, model, options, analysis)
         if advice is not None and anonymizer is not None:
             advice = _restore(anonymizer, advice, ConcernAdvice)
         result.concern_advice = advice
 
-    progress("분석 완료", 1.0)
+    progress("done", 1.0)
     return result
 
 
@@ -350,7 +352,7 @@ def _drain_with_progress(stream, progress: ProgressFn) -> None:
         etype = getattr(event, "type", "")
         if etype == "content_block_delta" and frac < 0.8:
             frac = min(0.8, frac + 0.01)
-            progress("AI 조항 분석 중…", frac)
+            progress("analyze", frac)
 
 
 def _first_text(message) -> str:

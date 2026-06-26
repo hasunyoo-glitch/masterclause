@@ -69,15 +69,17 @@ def masked(key: str | None) -> str:
 def validate_key(key: str) -> tuple[bool, str]:
     """Send a tiny request to confirm the key works.
 
-    Returns (ok, message). Never raises for ordinary auth/network failures.
+    Returns (ok, message_key). ``message_key`` is an i18n key the UI localizes
+    (``apikey.fail`` may carry a ``|detail`` suffix). Never raises for ordinary
+    auth/network failures.
     """
     key = (key or "").strip()
     if not key:
-        return False, "키가 비어 있습니다."
+        return False, "apikey.empty"
     try:
         import anthropic
     except ImportError:
-        return False, "anthropic 패키지가 설치되지 않았습니다."
+        return False, "apikey.no_sdk"
 
     client = anthropic.Anthropic(api_key=key)
     try:
@@ -86,15 +88,15 @@ def validate_key(key: str) -> tuple[bool, str]:
             max_tokens=8,
             messages=[{"role": "user", "content": "ping"}],
         )
-        return True, "연결 성공: 키가 유효합니다."
+        return True, "apikey.ok"
     except anthropic.AuthenticationError:
-        return False, "인증 실패: API 키가 올바르지 않습니다."
+        return False, "apikey.auth_fail"
     except anthropic.PermissionDeniedError:
-        return False, "권한 없음: 이 키로는 모델에 접근할 수 없습니다."
+        return False, "apikey.perm"
     except anthropic.APIConnectionError:
-        return False, "네트워크 오류: 인터넷 연결을 확인하세요."
+        return False, "apikey.net"
     except anthropic.RateLimitError:
         # Reaching the rate limit still proves the key authenticates.
-        return True, "키는 유효합니다(현재 사용량 제한). 잠시 후 분석하세요."
+        return True, "apikey.rate_ok"
     except Exception as exc:  # pragma: no cover - unexpected
-        return False, f"검증 실패: {exc}"
+        return False, f"apikey.fail|{exc}"

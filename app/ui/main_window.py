@@ -1,7 +1,7 @@
-"""Main window: QStackedWidget navigation + worker lifecycle (plan §3, §5)."""
+"""Main window: QStackedWidget navigation + worker lifecycle + UI language (plan §3, §5)."""
 from __future__ import annotations
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
@@ -15,7 +15,9 @@ from PySide6.QtWidgets import (
 )
 
 import config
+from app import i18n
 from app import state as state_mod
+from app.i18n import tr
 from app.state import AppState
 from app.ui.screen_options import OptionsScreen
 from app.ui.screen_progress import ProgressScreen
@@ -40,8 +42,11 @@ class MainWindow(QMainWindow):
         self.resize(840, 720)
         self.setMinimumSize(420, 420)
 
+        settings = state_mod.load_settings()
+        i18n.set_language(settings.get("ui_language", "ko"))
+
         self._state = AppState()
-        self._state.apply_defaults(state_mod.load_settings())
+        self._state.apply_defaults(settings)
         self._worker: AnalysisWorker | None = None
         self._return_index = S_UPLOAD
 
@@ -55,7 +60,7 @@ class MainWindow(QMainWindow):
         outer.setContentsMargins(0, 0, 0, 0)
         outer.setSpacing(0)
 
-        # Header bar
+        # Header bar (brand title is not translated; the button label is)
         header = QWidget()
         header.setObjectName("Header")
         hl = QHBoxLayout(header)
@@ -64,30 +69,31 @@ class MainWindow(QMainWindow):
         title.setObjectName("AppTitle")
         hl.addWidget(title)
         hl.addStretch(1)
-        self._settings_btn = QPushButton("설정")
+        self._settings_btn = QPushButton(tr("app.settings"))
         self._settings_btn.clicked.connect(self._open_settings)
         hl.addWidget(self._settings_btn)
         outer.addWidget(header)
 
-        # Stacked screens
         self._stack = QStackedWidget()
+        outer.addWidget(self._stack, 1)
+        self.setCentralWidget(central)
+
+        self._create_screens()
+
+    def _create_screens(self) -> None:
+        """(Re)build all step screens — also used when the UI language changes."""
         self._upload = UploadScreen(self._state)
         self._options = OptionsScreen(self._state)
         self._progress = ProgressScreen()
         self._result = ResultScreen(self._state)
         self._settings = SettingsScreen(self._state)
 
-        # Wrap the tall screens in scroll areas so every control stays reachable
-        # when the window is not maximized. The result screen manages its own
-        # scroll (with fixed action buttons), so it is added directly.
+        # Wrap the tall screens so every control stays reachable on small windows.
         self._stack.addWidget(self._scrollable(self._upload))    # 0
         self._stack.addWidget(self._scrollable(self._options))   # 1
         self._stack.addWidget(self._progress)                    # 2
         self._stack.addWidget(self._result)                      # 3
         self._stack.addWidget(self._scrollable(self._settings))  # 4
-        outer.addWidget(self._stack, 1)
-
-        self.setCentralWidget(central)
 
         # Wire signals (connect to the inner screens, not the scroll wrappers)
         self._upload.next_requested.connect(self._goto_options)
@@ -97,10 +103,10 @@ class MainWindow(QMainWindow):
         self._result.new_analysis_requested.connect(self._goto_upload_fresh)
         self._settings.closed.connect(self._close_settings)
         self._settings.key_saved.connect(self._on_key_saved)
+        self._settings.ui_language_changed.connect(self._request_ui_language)
 
     @staticmethod
     def _scrollable(widget: QWidget) -> QScrollArea:
-        """Wrap a screen so it scrolls vertically when the window is small."""
         area = QScrollArea()
         area.setWidgetResizable(True)
         area.setFrameShape(QScrollArea.NoFrame)
@@ -108,14 +114,43 @@ class MainWindow(QMainWindow):
         area.setWidget(widget)
         return area
 
+    # -- UI language ------------------------------------------------------- #
+    def _request_ui_language(self, lang: str) -> None:
+        # Defer so we don't delete the emitting settings screen mid-signal.
+        QTimer.singleShot(0, lambda: self.set_ui_language(lang))
+
+    def set_ui_language(self, lang: str) -> None:
+        if lang == i18n.get_language():
+            return
+        if self._worker is not None and self._worker.isRunning():
+            return  # never rebuild while an analysis is in flight
+        i18n.set_language(lang)
+        settings = state_mod.load_settings()
+        settings["ui_language"] = i18n.get_language()
+        state_mod.save_settings(settings)
+
+        index = self._stack.currentIndex()
+        had_result = self._state.result is not None
+
+        # Tear down and recreate all screens in the new language.
+        while self._stack.count():
+            w = self._stack.widget(0)
+            self._stack.removeWidget(w)
+            w.deleteLater()
+        self._settings_btn.setText(tr("app.settings"))
+        self._create_screens()
+
+        if had_result:
+            self._result.populate()
+        self._stack.setCurrentIndex(index)
+
     # -- Initial routing --------------------------------------------------- #
     def _route_initial(self) -> None:
         if not api_key.has_key():
             self._return_index = S_UPLOAD
             self._stack.setCurrentIndex(S_SETTINGS)
             QMessageBox.information(
-                self, "API 키 필요",
-                "분석을 시작하려면 먼저 Anthropic API 키를 설정하세요.",
+                self, tr("dlg.key_needed_title"), tr("dlg.key_needed_body")
             )
         else:
             self._stack.setCurrentIndex(S_UPLOAD)
@@ -145,26 +180,29 @@ class MainWindow(QMainWindow):
         self._stack.setCurrentIndex(target)
 
     def _on_key_saved(self) -> None:
-        # If we were forced here at startup, move on to the upload screen.
         if self._return_index == S_UPLOAD:
             self._stack.setCurrentIndex(S_UPLOAD)
 
     # -- Analysis lifecycle ------------------------------------------------ #
     def _start_analysis(self) -> None:
         if not api_key.has_key():
-            QMessageBox.warning(self, "API 키 필요", "분석 전에 API 키를 설정하세요.")
+            QMessageBox.warning(self, tr("dlg.key_needed_title"), tr("dlg.key_needed_short"))
             self._open_settings()
             return
         try:
             options = self._state.to_options()
-        except Exception as exc:  # malformed option set
-            QMessageBox.critical(self, "옵션 오류", str(exc))
+        except Exception as exc:
+            QMessageBox.critical(self, tr("dlg.option_error"), str(exc))
             return
         err = options.validate_rules()
         if err:
-            QMessageBox.warning(self, "옵션 확인", err)
+            QMessageBox.warning(self, tr("dlg.option_check"), err)
             return
 
+        # Offer to match the interface language to the analysis output language.
+        self._maybe_switch_ui_language(options.output_language)
+
+        self._settings_btn.setEnabled(False)
         self._progress.reset()
         self._stack.setCurrentIndex(S_PROGRESS)
 
@@ -174,6 +212,18 @@ class MainWindow(QMainWindow):
         self._worker.failed.connect(self._on_analysis_failed)
         self._worker.cancelled.connect(self._on_analysis_cancelled)
         self._worker.start()
+
+    def _maybe_switch_ui_language(self, output_language: str) -> None:
+        out = output_language if output_language in ("ko", "en") else "ko"
+        if out == i18n.get_language():
+            return
+        body = tr("dlg.switch_to_en") if out == "en" else tr("dlg.switch_to_ko")
+        answer = QMessageBox.question(
+            self, tr("dlg.switch_lang_title"), body,
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes,
+        )
+        if answer == QMessageBox.Yes:
+            self.set_ui_language(out)
 
     def _cancel_analysis(self) -> None:
         if self._worker is not None:
@@ -187,7 +237,7 @@ class MainWindow(QMainWindow):
         self._cleanup_worker()
 
     def _on_analysis_failed(self, message: str) -> None:
-        QMessageBox.critical(self, "분석 실패", message)
+        QMessageBox.critical(self, tr("dlg.analysis_failed"), message)
         self._stack.setCurrentIndex(S_OPTIONS)
         self._cleanup_worker()
 
@@ -199,6 +249,7 @@ class MainWindow(QMainWindow):
         if self._worker is not None:
             self._worker.wait(50)
             self._worker = None
+        self._settings_btn.setEnabled(True)
 
     def closeEvent(self, event) -> None:  # noqa: N802
         if self._worker is not None and self._worker.isRunning():

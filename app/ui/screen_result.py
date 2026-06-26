@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from app.i18n import tr
 from app.state import AppState
 from app.ui.widgets import Card, ClauseItem, RiskBadge, ScoreCard
 
@@ -39,7 +40,7 @@ class ResultScreen(QWidget):
         root.setContentsMargins(28, 24, 28, 24)
         root.setSpacing(12)
 
-        title = QLabel("4단계 · 분석 결과")
+        title = QLabel(tr("result.title"))
         title.setObjectName("StepTitle")
         root.addWidget(title)
 
@@ -49,14 +50,14 @@ class ResultScreen(QWidget):
         root.addWidget(self._scroll, 1)
 
         nav = QHBoxLayout()
-        self._open_folder = QPushButton("저장 폴더 열기")
+        self._open_folder = QPushButton(tr("result.open_folder"))
         self._open_folder.clicked.connect(self._on_open_folder)
-        self._open_report = QPushButton("리포트 열기")
+        self._open_report = QPushButton(tr("result.open_report"))
         self._open_report.clicked.connect(self._on_open_report)
         nav.addWidget(self._open_folder)
         nav.addWidget(self._open_report)
         nav.addStretch(1)
-        new_btn = QPushButton("새 분석")
+        new_btn = QPushButton(tr("result.new"))
         new_btn.setObjectName("Primary")
         new_btn.clicked.connect(self.new_analysis_requested.emit)
         nav.addWidget(new_btn)
@@ -73,15 +74,15 @@ class ResultScreen(QWidget):
         lay.setSpacing(14)
 
         if result is None:
-            lay.addWidget(QLabel("결과가 없습니다."))
+            lay.addWidget(QLabel(tr("result.empty")))
             self._scroll.setWidget(container)
             return
 
         # Saved-path notice
         if self._state.written_paths:
             paths = "\n".join(self._state.written_paths)
-            note = Card("저장 완료")
-            lbl = QLabel(f"리포트가 다음 위치에 저장되었습니다:\n{paths}")
+            note = Card(tr("result.saved_title"))
+            lbl = QLabel(tr("result.saved_body", paths=paths))
             lbl.setWordWrap(True)
             note.add(lbl)
             lay.addWidget(note)
@@ -92,9 +93,9 @@ class ResultScreen(QWidget):
         # Concern advice — prominent, near the top
         if result.concern_advice is not None:
             ca = result.concern_advice
-            card = Card("당신의 우려에 대한 조언")
+            card = Card(tr("result.concern"))
             crow = QHBoxLayout()
-            crow.addWidget(QLabel("우려 관점 위험도:"))
+            crow.addWidget(QLabel(tr("result.concern_risk")))
             crow.addWidget(RiskBadge(ca.risk_assessment))
             crow.addStretch(1)
             cw = QWidget()
@@ -108,7 +109,7 @@ class ResultScreen(QWidget):
             ans.setWordWrap(True)
             card.add(ans)
             if ca.relevant_clause_ids:
-                rel = QLabel("관련 조항: " + ", ".join(ca.relevant_clause_ids))
+                rel = QLabel(tr("result.related", ids=", ".join(ca.relevant_clause_ids)))
                 rel.setStyleSheet("color:#666;")
                 card.add(rel)
             for action in ca.recommended_actions:
@@ -118,17 +119,17 @@ class ResultScreen(QWidget):
             lay.addWidget(card)
 
         # Clauses
-        clause_card = Card(f"AI 관련 조항 ({len(result.ai_clauses)})")
+        clause_card = Card(tr("result.clauses", n=len(result.ai_clauses)))
         if not result.ai_clauses:
-            clause_card.add(QLabel("탐지된 조항이 없습니다."))
+            clause_card.add(QLabel(tr("result.no_clauses")))
         for clause in result.ai_clauses:
             clause_card.add(ClauseItem(clause))
         lay.addWidget(clause_card)
 
         # Playbook
-        pb_card = Card(f"협상 플레이북 ({len(result.negotiation_playbook)})")
+        pb_card = Card(tr("result.playbook", n=len(result.negotiation_playbook)))
         if not result.negotiation_playbook:
-            pb_card.add(QLabel("항목이 없습니다."))
+            pb_card.add(QLabel(tr("result.no_items")))
         for item in result.negotiation_playbook:
             tag = "★ walk-away  " if item.walk_away else ""
             head = QLabel(f"{tag}[{_v(item.priority)}] {item.issue}")
@@ -142,7 +143,7 @@ class ResultScreen(QWidget):
         lay.addWidget(pb_card)
 
         # Disclaimer
-        disc = Card("면책 고지")
+        disc = Card(tr("result.disclaimer"))
         d = QLabel(result.disclaimer)
         d.setWordWrap(True)
         d.setStyleSheet("color:#666;")

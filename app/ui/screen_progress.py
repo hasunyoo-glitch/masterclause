@@ -11,6 +11,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from app.i18n import tr, tr_stage
+
 
 class ProgressScreen(QWidget):
     cancel_requested = Signal()
@@ -24,13 +26,13 @@ class ProgressScreen(QWidget):
         root.setContentsMargins(28, 24, 28, 24)
         root.setSpacing(16)
 
-        title = QLabel("3단계 · 분석 진행")
+        title = QLabel(tr("progress.title"))
         title.setObjectName("StepTitle")
         root.addWidget(title)
 
         root.addStretch(1)
 
-        self._stage = QLabel("준비 중…")
+        self._stage = QLabel(tr("stage.ready"))
         self._stage.setAlignment(Qt.AlignCenter)
         self._stage.setStyleSheet("font-size:15px;")
         root.addWidget(self._stage)
@@ -40,7 +42,7 @@ class ProgressScreen(QWidget):
         self._bar.setValue(0)
         root.addWidget(self._bar)
 
-        steps = QLabel("파싱 → (익명화) → AI 분석 → 관할 매핑 → 벤치마크 → 리포트 생성")
+        steps = QLabel(tr("progress.steps"))
         steps.setAlignment(Qt.AlignCenter)
         steps.setStyleSheet("color:#888;")
         root.addWidget(steps)
@@ -49,7 +51,7 @@ class ProgressScreen(QWidget):
 
         nav = QHBoxLayout()
         nav.addStretch(1)
-        self._cancel = QPushButton("취소")
+        self._cancel = QPushButton(tr("common.cancel"))
         self._cancel.clicked.connect(self._on_cancel)
         nav.addWidget(self._cancel)
         nw = QWidget()
@@ -58,14 +60,14 @@ class ProgressScreen(QWidget):
 
     def reset(self) -> None:
         self._bar.setValue(0)
-        self._stage.setText("준비 중…")
+        self._stage.setText(tr("stage.ready"))
         self._cancel.setEnabled(True)
 
-    def update_progress(self, label: str, percent: int) -> None:
-        self._stage.setText(label)
+    def update_progress(self, stage_key: str, percent: int) -> None:
+        self._stage.setText(tr_stage(stage_key))
         self._bar.setValue(percent)
 
     def _on_cancel(self) -> None:
         self._cancel.setEnabled(False)
-        self._stage.setText("취소하는 중…")
+        self._stage.setText(tr("progress.cancelling"))
         self.cancel_requested.emit()

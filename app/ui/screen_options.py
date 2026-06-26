@@ -17,22 +17,24 @@ from PySide6.QtWidgets import (
 )
 
 import config
+from app.i18n import tr
 from app.state import AppState
 from app.ui.widgets import Card
 from core.models import Jurisdiction, OutputLanguage, Perspective, USState
 
+# (value, label_key, desc_key) — resolved through tr() at build time.
 _PERSPECTIVES = [
-    (Perspective.LAWYER.value, "엔터테인먼트 변호사", "의뢰인 자문 관점에서 집행가능성·법적 근거를 정밀하게 평가합니다."),
-    (Perspective.ARTIST.value, "아티스트", "당신의 권리·수익·통제권 보호 관점에서 위험을 평가합니다."),
-    (Perspective.LABEL.value, "음반사 / 레이블", "레이블의 리스크 노출·방어가능성·표준 대비 합리성을 평가합니다."),
+    (Perspective.LAWYER.value, "options.persp.lawyer", "options.persp.lawyer_desc"),
+    (Perspective.ARTIST.value, "options.persp.artist", "options.persp.artist_desc"),
+    (Perspective.LABEL.value, "options.persp.label", "options.persp.label_desc"),
 ]
 
 _US_STATES = [
-    (USState.CA.value, "California (CA)"),
-    (USState.NY.value, "New York (NY)"),
-    (USState.TN.value, "Tennessee (TN)"),
-    (USState.DC.value, "Washington D.C. (DC)"),
-    (USState.OTHER.value, "그 외 (직접 입력)"),
+    (USState.CA.value, "options.state.ca"),
+    (USState.NY.value, "options.state.ny"),
+    (USState.TN.value, "options.state.tn"),
+    (USState.DC.value, "options.state.dc"),
+    (USState.OTHER.value, "options.state.other"),
 ]
 
 
@@ -50,32 +52,33 @@ class OptionsScreen(QWidget):
         root.setContentsMargins(28, 24, 28, 24)
         root.setSpacing(16)
 
-        title = QLabel("2단계 · 분석 옵션 확정")
+        title = QLabel(tr("options.title"))
         title.setObjectName("StepTitle")
         root.addWidget(title)
 
         # --- Perspective ---
-        p_card = Card("입장 (Perspective)")
+        p_card = Card(tr("options.perspective"))
         self._p_group = QButtonGroup(self)
-        for value, label, desc in _PERSPECTIVES:
-            rb = QRadioButton(label)
+        for value, label_key, desc_key in _PERSPECTIVES:
+            rb = QRadioButton(tr(label_key))
             rb.setProperty("value", value)
             if value == self._state.perspective:
                 rb.setChecked(True)
             self._p_group.addButton(rb)
             p_card.add(rb)
-            d = QLabel(desc)
+            d = QLabel(tr(desc_key))
             d.setStyleSheet("color:#666; margin-left:22px; margin-bottom:4px;")
             d.setWordWrap(True)
             p_card.add(d)
         root.addWidget(p_card)
 
         # --- Language ---
-        l_card = Card("출력 언어 (Output Language)")
+        l_card = Card(tr("options.language"))
         lrow = QHBoxLayout()
         self._l_group = QButtonGroup(self)
-        for value, label in [(OutputLanguage.KO.value, "한글"), (OutputLanguage.EN.value, "English")]:
-            rb = QRadioButton(label)
+        for value, label_key in [(OutputLanguage.KO.value, "options.lang.ko"),
+                                 (OutputLanguage.EN.value, "options.lang.en")]:
+            rb = QRadioButton(tr(label_key))
             rb.setProperty("value", value)
             if value == self._state.output_language:
                 rb.setChecked(True)
@@ -88,11 +91,12 @@ class OptionsScreen(QWidget):
         root.addWidget(l_card)
 
         # --- Jurisdiction + state ---
-        j_card = Card("관할 (Jurisdiction)")
+        j_card = Card(tr("options.jurisdiction"))
         jrow = QHBoxLayout()
         self._j_group = QButtonGroup(self)
-        for value, label in [(Jurisdiction.KR.value, "대한민국"), (Jurisdiction.US.value, "미국")]:
-            rb = QRadioButton(label)
+        for value, label_key in [(Jurisdiction.KR.value, "options.jur.kr"),
+                                 (Jurisdiction.US.value, "options.jur.us")]:
+            rb = QRadioButton(tr(label_key))
             rb.setProperty("value", value)
             if value == self._state.jurisdiction:
                 rb.setChecked(True)
@@ -105,14 +109,14 @@ class OptionsScreen(QWidget):
         j_card.add(jw)
 
         srow = QHBoxLayout()
-        srow.addWidget(QLabel("주(State):"))
+        srow.addWidget(QLabel(tr("options.state")))
         self._state_combo = QComboBox()
-        for value, label in _US_STATES:
-            self._state_combo.addItem(label, value)
+        for value, label_key in _US_STATES:
+            self._state_combo.addItem(tr(label_key), value)
         self._state_combo.currentIndexChanged.connect(self._on_state_changed)
         srow.addWidget(self._state_combo, 1)
         self._state_other = QLineEdit()
-        self._state_other.setPlaceholderText("주 이름 직접 입력")
+        self._state_other.setPlaceholderText(tr("options.state_other_ph"))
         self._state_other.setVisible(False)
         srow.addWidget(self._state_other, 1)
         sw = QWidget()
@@ -121,23 +125,23 @@ class OptionsScreen(QWidget):
         root.addWidget(j_card)
 
         # --- Privacy ---
-        pr_card = Card("프라이버시 (선택)")
-        self._anon = QCheckBox("전송 전 익명화 (이름·식별정보 마스킹)")
+        pr_card = Card(tr("options.privacy"))
+        self._anon = QCheckBox(tr("options.anon"))
         self._anon.setChecked(self._state.anonymize_before_analysis)
-        self._zero = QCheckBox("zero-retention (이력 DB에 저장하지 않음)")
+        self._zero = QCheckBox(tr("options.zero"))
         self._zero.setChecked(self._state.zero_retention)
         pr_card.add(self._anon)
         pr_card.add(self._zero)
         root.addWidget(pr_card)
 
         # --- Concern ---
-        c_card = Card("가장 큰 우려 (선택)")
-        hint = QLabel("이 계약에서 가장 걱정되는 점을 적어주세요. 비워두면 일반 분석만 수행합니다.")
+        c_card = Card(tr("options.concern"))
+        hint = QLabel(tr("options.concern_hint"))
         hint.setStyleSheet("color:#666;")
         hint.setWordWrap(True)
         c_card.add(hint)
         self._concern = QPlainTextEdit()
-        self._concern.setPlaceholderText("예) 제 목소리가 AI 학습에 무기한 사용되는 것이 걱정됩니다.")
+        self._concern.setPlaceholderText(tr("options.concern_ph"))
         self._concern.setFixedHeight(80)
         self._concern.textChanged.connect(self._on_concern_changed)
         c_card.add(self._concern)
@@ -148,12 +152,12 @@ class OptionsScreen(QWidget):
         root.addWidget(c_card)
 
         # --- Output format ---
-        f_card = Card("출력 형식")
+        f_card = Card(tr("options.format"))
         frow = QHBoxLayout()
         self._fmt_combo = QComboBox()
-        self._fmt_combo.addItem("DOCX (기본)", "docx")
-        self._fmt_combo.addItem("PDF (Word 필요)", "pdf")
-        self._fmt_combo.addItem("DOCX + PDF", "both")
+        self._fmt_combo.addItem(tr("options.fmt.docx"), "docx")
+        self._fmt_combo.addItem(tr("options.fmt.pdf"), "pdf")
+        self._fmt_combo.addItem(tr("options.fmt.both"), "both")
         idx = max(0, self._fmt_combo.findData(self._state.output_format))
         self._fmt_combo.setCurrentIndex(idx)
         frow.addWidget(self._fmt_combo)
@@ -167,14 +171,14 @@ class OptionsScreen(QWidget):
 
         # --- Nav ---
         nav = QHBoxLayout()
-        back = QPushButton("← 뒤로")
+        back = QPushButton(tr("common.back"))
         back.clicked.connect(self.back_requested.emit)
         nav.addWidget(back)
         nav.addStretch(1)
         self._warn = QLabel("")
         self._warn.setStyleSheet("color:#b00020;")
         nav.addWidget(self._warn)
-        self._start = QPushButton("분석 시작")
+        self._start = QPushButton(tr("options.start"))
         self._start.setObjectName("Primary")
         self._start.clicked.connect(self._on_start)
         nav.addWidget(self._start)
@@ -228,7 +232,7 @@ class OptionsScreen(QWidget):
                 ok = False
             elif data == USState.OTHER.value and not self._state_other.text().strip():
                 ok = False
-                msg = "주 이름을 입력하세요."
+                msg = tr("options.need_state")
         self._warn.setText(msg)
         self._start.setEnabled(ok)
         return ok

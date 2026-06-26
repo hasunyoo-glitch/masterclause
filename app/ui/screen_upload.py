@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from app.i18n import tr
 from app.state import AppState
 from app.ui.widgets import Card
 from core import parser
@@ -34,15 +35,15 @@ class UploadScreen(QWidget):
         root.setContentsMargins(28, 24, 28, 24)
         root.setSpacing(16)
 
-        title = QLabel("1단계 · 계약서 선택")
+        title = QLabel(tr("upload.title"))
         title.setObjectName("StepTitle")
         root.addWidget(title)
 
         # File card
-        file_card = Card("계약서 파일 (PDF / DOCX)")
-        self._file_label = QLabel("선택된 파일이 없습니다. 파일을 끌어다 놓거나 선택하세요.")
+        file_card = Card(tr("upload.file_card"))
+        self._file_label = QLabel(tr("upload.no_file"))
         self._file_label.setWordWrap(True)
-        pick = QPushButton("파일 선택…")
+        pick = QPushButton(tr("upload.pick_file"))
         pick.clicked.connect(self._pick_file)
         row = QHBoxLayout()
         row.addWidget(self._file_label, 1)
@@ -58,12 +59,12 @@ class UploadScreen(QWidget):
         root.addWidget(file_card)
 
         # Output card
-        out_card = Card("리포트 저장 위치")
-        self._out_label = QLabel("저장 폴더가 선택되지 않았습니다.")
+        out_card = Card(tr("upload.out_card"))
+        self._out_label = QLabel(tr("upload.no_out"))
         self._out_label.setWordWrap(True)
-        out_btn = QPushButton("폴더 선택…")
+        out_btn = QPushButton(tr("upload.pick_folder"))
         out_btn.clicked.connect(self._pick_output)
-        save_as = QPushButton("파일명까지 지정…")
+        save_as = QPushButton(tr("upload.pick_filename"))
         save_as.clicked.connect(self._pick_output_file)
         orow = QHBoxLayout()
         orow.addWidget(self._out_label, 1)
@@ -78,7 +79,7 @@ class UploadScreen(QWidget):
 
         nav = QHBoxLayout()
         nav.addStretch(1)
-        self._next = QPushButton("다음 →")
+        self._next = QPushButton(tr("common.next"))
         self._next.setObjectName("Primary")
         self._next.setEnabled(False)
         self._next.clicked.connect(self._go_next)
@@ -102,7 +103,7 @@ class UploadScreen(QWidget):
     # -- Actions ----------------------------------------------------------- #
     def _pick_file(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
-            self, "계약서 선택", "", "계약서 (*.pdf *.docx)"
+            self, tr("upload.dlg_select"), "", tr("upload.filter_contract")
         )
         if path:
             self._load_file(path)
@@ -110,20 +111,20 @@ class UploadScreen(QWidget):
     def _load_file(self, path: str) -> None:
         suffix = Path(path).suffix.lower()
         if suffix not in parser.SUPPORTED_SUFFIXES:
-            QMessageBox.warning(self, "지원하지 않는 형식", "PDF 또는 DOCX 파일만 지원합니다.")
+            QMessageBox.warning(self, tr("upload.unsupported_title"),
+                                tr("upload.unsupported_body"))
             return
         try:
             parsed = parser.parse(path)
         except parser.ParserError as exc:
-            QMessageBox.critical(self, "파싱 실패", str(exc))
+            QMessageBox.critical(self, tr("upload.parse_fail"), str(exc))
             return
         self._state.input_file_path = path
         self._state.parsed = parsed
         self._file_label.setText(path)
-        meta = (
-            f"페이지 {parsed.page_count} · 문단 {parsed.paragraph_count} · "
-            f"{parsed.char_count:,}자\n\n{parsed.preview()}"
-        )
+        meta = tr("upload.meta", pages=parsed.page_count,
+                  paras=parsed.paragraph_count, chars=parsed.char_count)
+        meta = f"{meta}\n\n{parsed.preview()}"
         self._preview.setText(meta)
         self._preview.setVisible(True)
         # Default output folder = the contract's folder, if none chosen yet.
@@ -133,7 +134,7 @@ class UploadScreen(QWidget):
         self._refresh_next()
 
     def _pick_output(self) -> None:
-        folder = QFileDialog.getExistingDirectory(self, "리포트 저장 폴더 선택")
+        folder = QFileDialog.getExistingDirectory(self, tr("upload.dlg_folder"))
         if folder:
             self._state.output_path = folder
             self._out_label.setText(folder)
@@ -141,7 +142,7 @@ class UploadScreen(QWidget):
 
     def _pick_output_file(self) -> None:
         path, _ = QFileDialog.getSaveFileName(
-            self, "리포트 저장 파일명", "contract_analysis.docx", "Word 문서 (*.docx)"
+            self, tr("upload.dlg_filename"), "contract_analysis.docx", tr("upload.filter_word")
         )
         if path:
             self._state.output_path = path
