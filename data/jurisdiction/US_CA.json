@@ -1,0 +1,29 @@
+{
+  "key": "US_CA",
+  "label": "United States — California",
+  "review_status": "DRAFT — requires review by a licensed California entertainment attorney",
+  "sources_as_of": "2026-06",
+  "issues": [
+    {
+      "topic": "Seven-Year Rule",
+      "law": "California Labor Code §2855",
+      "note": "Personal service contracts are not enforceable beyond seven years; relevant to long exclusive terms."
+    },
+    {
+      "topic": "Right of Publicity",
+      "law": "California Civil Code §3344 (and common-law right of publicity)",
+      "note": "Unauthorized use of name, voice, signature, photograph or likeness for commercial purposes."
+    },
+    {
+      "topic": "Digital Replica (AI)",
+      "law": "California AB 2602",
+      "note": "Contract provisions for AI-generated digital replicas of a performer's voice/likeness are unenforceable absent specific, reasonably particular description and (often) representation."
+    },
+    {
+      "topic": "Deceased Personality / Digital Replica",
+      "law": "California AB 1836",
+      "note": "Use of a deceased personality's digital replica requires estate consent; relevant to perpetual/posthumous grants."
+    }
+  ],
+  "prompt_context": "준거 관할: 미국 캘리포니아. 다음 캘리포니아 법리를 우선 적용하라 — Labor Code §2855(7년 룰: 인적 서비스 계약의 7년 초과 구속 제한), Civil Code §3344 및 보통법상 퍼블리시티권(성명·음성·초상의 무단 상업적 이용), AB 2602(연기자 음성·초상의 AI 디지털 레플리카 조항은 구체적·특정적 기술과 대리 표현이 없으면 집행 불가), AB 1836(고인의 디지털 레플리카 이용 시 유족 동의). 무기한/사후 권리 부여와 AI 디지털 레플리카 동의의 특정성을 반드시 평가하라."
+}

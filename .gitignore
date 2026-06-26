@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+
+# PyInstaller / Inno Setup build artifacts
+build/Output/
+dist/
+*.manifest
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# App-generated reports / local data
+*.docx
+*.pdf
+!data/**/*.json

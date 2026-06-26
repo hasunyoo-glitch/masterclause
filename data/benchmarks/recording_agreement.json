@@ -1,0 +1,13 @@
+{
+  "contract_type": "recording_agreement",
+  "label": "Recording Agreement",
+  "review_status": "DRAFT — illustrative market ranges; verify per deal and territory",
+  "standards": [
+    {"topic": "Artist royalty rate", "standard": "보통 신인 12–18%, 중견 18–22% (PPD/소매가 기준). 패키지·공제 후 실수령은 더 낮음."},
+    {"topic": "Recoupable advances", "standard": "선급금은 회수(recoup) 대상이나 마스터 소유권을 박탈하지 않는 것이 표준."},
+    {"topic": "Term / album commitment", "standard": "1+옵션 구조가 흔하며, 총 구속기간은 합리적이어야 함(캘리포니아 7년 룰 주의)."},
+    {"topic": "Masters ownership", "standard": "전통적으로 레이블 소유. 일정 기간 후 반환·라이선스백 협상 여지."},
+    {"topic": "AI / digital replica rights", "standard": "음성·초상의 AI 학습·합성 권리는 별도 명시·동의·용도 제한이 시장 모범관행. 무기한·포괄 부여는 비표준."},
+    {"topic": "360 / ancillary rights", "standard": "공연·머천다이즈 등 부수 수익 공유는 협상 대상이며 과도한 지분은 비우호적."}
+  ]
+}

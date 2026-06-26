@@ -1,0 +1,24 @@
+{
+  "key": "US_OTHER",
+  "label": "United States — Other state (federal common analysis)",
+  "review_status": "DRAFT — verify against the specific state's law with local counsel",
+  "sources_as_of": "2026-06",
+  "issues": [
+    {
+      "topic": "Federal Copyright",
+      "law": "U.S. Copyright Act (17 U.S.C.)",
+      "note": "Scope of grants, work-made-for-hire, and §203 termination of transfers."
+    },
+    {
+      "topic": "Right of Publicity (varies by state)",
+      "law": "State right-of-publicity statutes / common law (varies widely)",
+      "note": "Some states have broad descendible statutes; others rely on common law. Confirm the named state."
+    },
+    {
+      "topic": "AI Digital Replica (emerging)",
+      "law": "State-level AI/digital-replica bills (rapidly changing)",
+      "note": "Several states are enacting voice/likeness AI protections; treat as emerging and confirm locally."
+    }
+  ],
+  "prompt_context": "준거 관할: 미국(사용자 지정 주). 주별 특수성은 일반론으로 처리하고 연방 공통 쟁점을 우선 적용하라 — 연방 저작권법(17 U.S.C., 양도 범위·업무상저작물·§203 종료권), 주별로 상이한 퍼블리시티권(성문/보통법), 빠르게 변동하는 주 단위 AI 디지털 레플리카 입법. 지정된 주의 구체적 법령은 현지 변호사 확인이 필요함을 명시하라."
+}

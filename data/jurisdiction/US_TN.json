@@ -1,0 +1,19 @@
+{
+  "key": "US_TN",
+  "label": "United States — Tennessee",
+  "review_status": "DRAFT — requires review by a licensed Tennessee entertainment attorney",
+  "sources_as_of": "2026-06",
+  "issues": [
+    {
+      "topic": "Voice & Likeness (AI)",
+      "law": "Tennessee ELVIS Act (Ensuring Likeness, Voice, and Image Security Act of 2024)",
+      "note": "Explicitly protects an individual's voice (including AI-simulated voice) and likeness; provides civil liability for unauthorized use and tools that make unauthorized replicas."
+    },
+    {
+      "topic": "Right of Publicity",
+      "law": "Tennessee Personal Rights Protection Act (as amended by the ELVIS Act)",
+      "note": "Broad, descendible publicity rights; central to Nashville recording/publishing deals."
+    }
+  ],
+  "prompt_context": "준거 관할: 미국 테네시. 다음 테네시 법리를 우선 적용하라 — ELVIS Act(2024, 개인의 음성(AI 합성 음성 포함)과 초상을 명시적으로 보호하고 무단 복제 도구·이용에 민사책임 부과), Personal Rights Protection Act(상속 가능한 퍼블리시티권). 음성 복제·합성 커버에 대한 명시적 동의와 ELVIS Act 위반 가능성을 반드시 평가하라."
+}

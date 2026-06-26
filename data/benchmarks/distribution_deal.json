@@ -1,0 +1,12 @@
+{
+  "contract_type": "distribution_deal",
+  "label": "Distribution Deal",
+  "review_status": "DRAFT — illustrative market ranges; verify per deal and territory",
+  "standards": [
+    {"topic": "Distribution fee", "standard": "디지털 배급 수수료 보통 10–20%; 아티스트가 마스터 소유 유지가 표준."},
+    {"topic": "Term & exclusivity", "standard": "단기·갱신형이 흔하며, 짧은 해지통지(예: 30–90일)와 권리 반환이 우호적."},
+    {"topic": "Ownership", "standard": "배급사는 권리 양수가 아닌 라이선스만 받는 것이 표준."},
+    {"topic": "AI / new media", "standard": "AI·미래기술 이용은 '현재 알려진 매체'로 한정하고 신규 용도는 추가 합의가 모범관행."},
+    {"topic": "Accounting", "standard": "월·분기 정산과 감사권(audit right)이 우호적."}
+  ]
+}

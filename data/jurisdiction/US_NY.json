@@ -1,0 +1,24 @@
+{
+  "key": "US_NY",
+  "label": "United States — New York",
+  "review_status": "DRAFT — requires review by a licensed New York entertainment attorney",
+  "sources_as_of": "2026-06",
+  "issues": [
+    {
+      "topic": "Right of Privacy / Publicity",
+      "law": "New York Civil Rights Law §§50–51",
+      "note": "Statutory right against unauthorized commercial use of name, portrait, picture or voice."
+    },
+    {
+      "topic": "Digital Replica of Performers",
+      "law": "New York Civil Rights Law §50-f (digital replicas) and related amendments",
+      "note": "Use of a digital replica of a deceased performer requires consent; contractual provisions for digital replicas are scrutinized."
+    },
+    {
+      "topic": "Freelance / Personal Services",
+      "law": "New York common law on personal-service contracts",
+      "note": "Reasonableness of duration and exclusivity of personal-service obligations."
+    }
+  ],
+  "prompt_context": "준거 관할: 미국 뉴욕. 다음 뉴욕 법리를 우선 적용하라 — Civil Rights Law §§50–51(성명·초상·음성의 무단 상업적 이용 금지), §50-f(공연자 디지털 레플리카 이용 시 동의 요건), 보통법상 인적 서비스 계약의 기간·전속성 합리성. AI 디지털 레플리카 동의와 음성·초상 이용 범위를 반드시 평가하라."
+}

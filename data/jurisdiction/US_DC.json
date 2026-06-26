@@ -1,0 +1,24 @@
+{
+  "key": "US_DC",
+  "label": "United States — Washington, D.C.",
+  "review_status": "DRAFT — requires review by a licensed D.C. attorney",
+  "sources_as_of": "2026-06",
+  "issues": [
+    {
+      "topic": "Federal Copyright",
+      "law": "U.S. Copyright Act (17 U.S.C.) and Copyright Office guidance on AI",
+      "note": "Authorship/registrability of AI-assisted works; scope of grants and termination rights (§203)."
+    },
+    {
+      "topic": "Common-law Publicity",
+      "law": "D.C. common-law right of publicity / privacy torts",
+      "note": "D.C. has no comprehensive publicity statute; analysis relies on common-law misappropriation."
+    },
+    {
+      "topic": "Termination of Transfers",
+      "law": "17 U.S.C. §203 / §304",
+      "note": "Authors may terminate certain grants after a statutory window regardless of contract language."
+    }
+  ],
+  "prompt_context": "준거 관할: 미국 워싱턴 D.C.(연방 특별구, 주는 아니나 관할로 취급). 연방 저작권법(17 U.S.C., AI 보조 저작물의 저작자성·등록 가능성, §203 양도 종료권)과 D.C. 보통법상 퍼블리시티/사칭 불법행위를 적용하라. 주별 특수 입법 대신 연방 공통 쟁점을 우선하되, AI 디지털 레플리카에 대한 명시적 동의 유무를 평가하라."
+}

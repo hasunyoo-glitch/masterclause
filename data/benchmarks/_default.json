@@ -1,0 +1,12 @@
+{
+  "contract_type": "unknown",
+  "label": "General music contract",
+  "review_status": "DRAFT — generic music-industry standards",
+  "standards": [
+    {"topic": "Ownership vs license", "standard": "권리는 양도보다 라이선스가, 무기한보다 기간 한정이 일반적으로 우호적."},
+    {"topic": "Term length", "standard": "합리적 기간 + 명확한 종료/반환 메커니즘이 표준."},
+    {"topic": "AI / digital replica rights", "standard": "음성·초상·작품의 AI 학습·합성 이용은 별도 명시 동의·용도 제한·보상이 모범관행. 포괄·무기한·무상 부여는 비표준."},
+    {"topic": "Revenue split", "standard": "수익 배분은 투명한 정산·감사권과 함께 균형 있게 설정."},
+    {"topic": "Dispute resolution", "standard": "준거법·관할이 명확하고, 집단소송 포기 등 권리 제한 조항은 면밀히 검토."}
+  ]
+}

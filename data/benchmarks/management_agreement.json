@@ -1,0 +1,12 @@
+{
+  "contract_type": "management_agreement",
+  "label": "Management Agreement",
+  "review_status": "DRAFT — illustrative market ranges; verify per deal and territory",
+  "standards": [
+    {"topic": "Commission rate", "standard": "통상 총수입의 15–20%. 일부 수익원 제외(예: 기존 계약 수익)이 우호적."},
+    {"topic": "Term", "standard": "보통 2–3년 + 옵션. 캘리포니아 7년 룰 고려."},
+    {"topic": "Sunset clause", "standard": "계약 종료 후 커미션을 점감(sunset)시키는 조항이 아티스트에 우호적."},
+    {"topic": "Scope / power of attorney", "standard": "매니저의 대리권은 제한적·구체적이어야 하며 포괄 위임은 비우호적."},
+    {"topic": "Key-person", "standard": "특정 매니저 이탈 시 해지 가능(key-person) 조항이 우호적."}
+  ]
+}
